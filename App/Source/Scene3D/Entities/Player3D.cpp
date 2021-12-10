@@ -312,7 +312,8 @@ void CPlayer3D::ProcessMovement(const PLAYERMOVEMENT direction, const float delt
 
 	if (direction == PLAYERMOVEMENT::CROUCH)
 	{
-		vec3Position -= vec3Up * velocity;
+		fMovementSpeed = 1.f;
+		cCamera->vec3Offset = vec3Up * -0.1f;
 	}
 		
 	// Indicate that camera sway is to be updated

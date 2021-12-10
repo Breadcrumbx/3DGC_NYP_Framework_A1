@@ -277,8 +277,9 @@ bool CScene3D::Update(const double dElapsedTime)
 	cPlayer3D->StorePositionForRollback();
 	//Update the projectiles
 	cProjectileManager->Update(dElapsedTime);
-	cout << boolalpha;
-	cout << CCameraEffectsManager::GetInstance()->Get("CameraShake")->GetStatus() << endl;
+	/*cout << boolalpha;
+	cout << CCameraEffectsManager::GetInstance()->Get("CameraShake")->GetStatus() << endl;*/
+	cout << cPlayer3D->GetMovementSpeed() << endl;
 	//cout << cPlayer3D->GetWeapon()->getReloadTime() << endl;
 	//Call the cGUI Scene3D's update method
 	//cGUI_Scene3D->Update(dElapsedTime);
@@ -306,7 +307,6 @@ bool CScene3D::Update(const double dElapsedTime)
 	}
 	if (CKeyboardController::GetInstance()->IsKeyDown(GLFW_KEY_LEFT_CONTROL))
 	{
-		cPlayer3D->SetMovementSpeed(1.0f);
 		//cout << cPlayer3D->GetMovementSpeed() << endl;
 		cPlayer3D->ProcessMovement(CPlayer3D::PLAYERMOVEMENT::CROUCH, (float)dElapsedTime);
 	}

@@ -132,7 +132,7 @@ bool CEnemy3D::Init(void)
 	cPlayer3D = CPlayer3D::GetInstance();
 	
 
-
+	
 
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
