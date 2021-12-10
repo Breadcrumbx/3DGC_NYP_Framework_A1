@@ -14,6 +14,8 @@
 // Include ImageLoader
 #include "System\ImageLoader.h"
 
+ // Include LoadOBJ
+#include "System/LoadOBJ.h"
 
 #include "SolidObjectManager.h"
 
@@ -129,17 +131,46 @@ bool CEnemy3D::Init(void)
 	// Initialise the cPlayer3D
 	cPlayer3D = CPlayer3D::GetInstance();
 	
-	// Generate and bind the VAO
+
+
+
+	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec2> uvs;
+	std::vector<glm::vec3> normals;
+	std::vector<ModelVertex> vertex_buffer_data;
+	std::vector<GLuint> index_buffer_data;
+
+	std::string file_path = "Models/Pistol/gun_type64_01.obj";
+	bool success = CLoadOBJ::LoadOBJ(file_path.c_str(), vertices, uvs, normals, true);
+	if (!success)
+	{
+		cout << "Unable to load Models/Pistol/gun_type64_01.obj" << endl;
+		return false;
+	}
+
+	CLoadOBJ::IndexVBO(vertices, uvs, normals, index_buffer_data, vertex_buffer_data);
+
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &IBO);
 
-	mesh = CMeshBuilder::GenerateBox(glm::vec4(1, 1, 1, 1));
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size() * sizeof(ModelVertex), &vertex_buffer_data[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_data.size() * sizeof(GLuint), &index_buffer_data[0], GL_STATIC_DRAW);
+	iIndicesSize = index_buffer_data.size();
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (void*)(sizeof(glm::vec3) + sizeof(glm::vec3)));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	// load and create a texture 
-	iTextureID = CImageLoader::GetInstance()->LoadTextureGetID("Image/Scene3D_Enemy_01.tga", false);
+	iTextureID = CImageLoader::GetInstance()->LoadTextureGetID("Models/Pistol/map_gunType64_01_AO.png", false);
 	if (iTextureID == 0)
 	{
-		cout << "Unable to load Image/Scene3D_Enemy_01.tga" << endl;
+		cout << "Unable to load Models/Pistol/map_gunType64_01_AO.png" << endl;
 		return false;
 	}
 
