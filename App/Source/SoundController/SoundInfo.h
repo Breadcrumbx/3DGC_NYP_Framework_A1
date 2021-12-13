@@ -30,6 +30,7 @@ public:
 	bool Init(	const int ID, 
 				ISoundSource* pSoundSource, 
 				const bool bIsLooped = false, 
+				const bool isOverlap = false,
 				SOUNDTYPE eSoundType = _2D,
 				vec3df vec3dfSoundPos = vec3df(0.0f, 0.0f, 0.0f));
 
@@ -54,6 +55,8 @@ public:
 	// Get position
 	vec3df GetPosition(void) const;
 
+	bool GetOverlap();
+
 protected:
 	// ID for this sound
 	int ID;
@@ -63,6 +66,8 @@ protected:
 
 	// Indicate if this sound will be looped during playback
 	bool bIsLooped;
+
+	bool isOverlap;
 
 	// Sound type
 	SOUNDTYPE eSoundType;

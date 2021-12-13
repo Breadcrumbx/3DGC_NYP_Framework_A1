@@ -16,6 +16,17 @@
 class CProjectile : public CSolidObject
 {
 public:
+	enum PROJECTILE_TYPE{
+		BULLET,
+		THROW,
+		TOTAL
+	};
+
+
+	void SetProjType(PROJECTILE_TYPE type);
+
+	CProjectile::PROJECTILE_TYPE GetProjType();
+
 	// Default Constructor
 	CProjectile(void);
 	// Destructor
@@ -43,6 +54,8 @@ public:
 	void SetSpeed(const float fSpeed);
 	// Set the source of the projectile
 	void SetSource(CSolidObject* pSource);
+
+
 
 	// Get the direction of the projectile
 	glm::vec3 GetDirection(void);
@@ -73,6 +86,8 @@ protected:
 	double dLifetime;
 	// Speed of this projectile in unit / sec
 	float fSpeed;
+
+	PROJECTILE_TYPE pType;
 	// The source which fired this projectile
 	CSolidObject* pSource;
 };

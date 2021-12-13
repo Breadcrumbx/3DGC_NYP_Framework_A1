@@ -44,6 +44,7 @@ public:
 
 							std::vector<unsigned>& out_indices,
 							std::vector<ModelVertex>& out_vertices);
+
 };
 
 

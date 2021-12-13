@@ -178,3 +178,14 @@ void CSolidObject::PrintSelf(void)
 	cout << "CSolidObject::PrintSelf()" << endl;
 	cout << "========================" << endl;
 }
+
+void CSolidObject::SetHP(int hp)
+{
+	this->hp = hp;
+}
+
+
+int CSolidObject::GetHP()
+{
+	return hp;
+}

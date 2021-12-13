@@ -28,6 +28,9 @@
 // Include Physics3D
 #include "../Physics3D.h"
 
+
+
+
 #include <string>
 using namespace std;
 
@@ -45,6 +48,7 @@ public:
 		LEFT,
 		RIGHT,
 		CROUCH,
+		SPRINTING,
 		NUM_MOVEMENTS
 	};
 
@@ -52,6 +56,8 @@ public:
 	glm::vec3 vec3Up;
 	glm::vec3 vec3Right;
 	glm::vec3 vec3WorldUp;
+
+	
 	// Euler Angles
 	float fYaw;
 	float fPitch;
@@ -116,6 +122,11 @@ public:
 	// Print Self
 	virtual void PrintSelf(void);
 
+	virtual void SetHP(int hp);
+
+	virtual int GetHP();
+
+
 protected:
 	// The handle to the CCamera class instance
 	CCamera* cCamera;
@@ -126,6 +137,9 @@ protected:
 	// The handle to the CWeaponInfo class instance
 	CWeaponInfo* cPrimaryWeapon;
 	CWeaponInfo* cSecondaryWeapon;
+
+
+
 	int iCurrentWeapon;
 
 	// Player/Camera Sway
@@ -139,6 +153,8 @@ protected:
 
 	// Physics
 	CPhysics3D cPhysics3D;
+
+	
 
 	// Default Constructor
 	CPlayer3D(void);

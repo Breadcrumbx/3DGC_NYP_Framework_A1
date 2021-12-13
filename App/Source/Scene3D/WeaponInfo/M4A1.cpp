@@ -37,25 +37,27 @@ bool CM4A1::Init(void)
 	CWeaponInfo::Init();
 
 
-	RecoilAmt = 0.1f;
+	RecoilAmt = 0.3f;
 
+	ReloadAmt = 0.04f;
 
 
 	// The number of ammunition in a magazine for this weapon
-	iMagRounds = 8;
+	iMagRounds = 25;
 	// The maximum number of ammunition for this magazine for this weapon
-	iMaxMagRounds = 8;
+	iMaxMagRounds = 25;
 	// The current total number of rounds currently carried by this player
-	iTotalRounds = 40;
+	iTotalRounds = 75;
 	// The max total number of rounds currently carried by this player
-	iMaxTotalRounds = 40;
+	iMaxTotalRounds = 75;
 
 	// The time between shots
-	dTimeBetweenShots = 0.025;
+	dTimeBetweenShots = 0.05f;
 	// The elapsed time (between shots)
 	dElapsedTime = 0.0;
 	// Boolean flag to indicate if weapon can fire now
 	bFire = true;
+	damage = 5;
 
 	// Call the parent's Init()
 	CEntity3D::Init();

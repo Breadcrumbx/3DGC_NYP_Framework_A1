@@ -188,6 +188,24 @@
     <ClCompile Include="Source\Scene3D\Minimap\Minimap.cpp">
       <Filter>Scene3D\Minimap</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene3D\Entities\EnemyFactory.cpp">
+      <Filter>Scene3D\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene3D\Entities\Attributes.cpp">
+      <Filter>Scene3D\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene3D\WeaponInfo\Artillery.cpp">
+      <Filter>Scene3D\WeaponInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene3D\Entities\EntityFactory.cpp">
+      <Filter>Scene3D\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene3D\Entities\Health.cpp">
+      <Filter>Scene3D\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameStateManagement\LoseState.cpp">
+      <Filter>GameStateManagement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -330,6 +348,24 @@
     </ClInclude>
     <ClInclude Include="Source\Scene3D\MyMath.h">
       <Filter>Scene3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene3D\Entities\EnemyFactory.h">
+      <Filter>Scene3D\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene3D\Entities\Attributes.h">
+      <Filter>Scene3D\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene3D\WeaponInfo\Artillery.h">
+      <Filter>Scene3D\WeaponInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene3D\Entities\EntityFactory.h">
+      <Filter>Scene3D\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene3D\Entities\Health.h">
+      <Filter>Scene3D\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameStateManagement\LoseState.h">
+      <Filter>GameStateManagement</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

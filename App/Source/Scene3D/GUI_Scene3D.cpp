@@ -16,6 +16,11 @@
 
 #include "WeaponInfo/Pistol.h"
 
+#include "WeaponInfo/M4A1.h"
+
+#include "Scene3D.h"
+
+#include "../App/Source/GameStateManagement/GameStateManager.h"
 #include <iostream>
 using namespace std;
 
@@ -33,6 +38,7 @@ CGUI_Scene3D::CGUI_Scene3D(void)
 	, cInventoryManager(NULL)
 	, cInventoryItem(NULL)
 	, cPlayer3D(NULL)
+	, NoAmmo(false)
 {
 }
 
@@ -79,6 +85,7 @@ CGUI_Scene3D::~CGUI_Scene3D(void)
   */
 bool CGUI_Scene3D::Init(void)
 {
+	win = false;
 	// Get the handler to the CSettings instance
 	cSettings = CSettings::GetInstance();
 
@@ -158,7 +165,9 @@ bool CGUI_Scene3D::Init(void)
 	// Get the handler to the CPlayer3D instance
 	cPlayer3D = CPlayer3D::GetInstance();
 
-	
+	CImageLoader* ImageLoad = CImageLoader::GetInstance();
+	Resume = (ImTextureID)ImageLoad->LoadTextureGetID("Image\\GUI\\ResumeButton.png", false);
+	Exit = (ImTextureID)ImageLoad->LoadTextureGetID("Image\\GUI\\ExitButton2.png", false);
 
 	return true;
 }
@@ -218,9 +227,31 @@ void CGUI_Scene3D::Update(const double dElapsedTime)
 
 	// Display the FPS
 	ImGui::TextColored(ImVec4(1, 1, 0, 1), "FPS: %d", cFPSCounter->GetFrameRate());
+	//Display the HP of Player
+	ImGui::TextColored(ImVec4(1, 0, 0, 1), "HP:");
+	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1, 1, 1, 1), "%d",cPlayer3D->GetHP());
+	ImGui::TextColored(ImVec4(1, 1, 1, 1), "Timer: %f", CScene3D::GetInstance()->GetTimer());
+	
+	if (NoAmmo)
+	{
+		timer -= dElapsedTime;
+		ImGui::SetWindowPos(ImVec2((float)cSettings->iWindowWidth * 0.35f, (float)cSettings->iWindowHeight * 0.4f));
+		ImGui::TextColored(ImVec4(1.000, 0.000, 1.000, 1), "You are out of Ammo!");
+		if (timer <= 0)
+		{
+			timer = 3.f;
+			NoAmmo = false;
+		}
+	}
 
+	if (win)
+	{
+		ImGui::TextColored(ImVec4(1.000, 0.000, 1.000, 1), "You win!");
+	}
+	
 	// Render the Health
-	ImGuiWindowFlags healthWindowFlags = ImGuiWindowFlags_AlwaysAutoResize |
+	/*ImGuiWindowFlags healthWindowFlags = ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoBackground |
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoMove |
@@ -242,29 +273,29 @@ void CGUI_Scene3D::Update(const double dElapsedTime)
 		(float)cInventoryItem->GetMaxCount(), ImVec2(100.0f * relativeScale_x, 20.0f * relativeScale_y));
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
-	ImGui::End();
+	ImGui::End();*/
 
 	// Render the Lives
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));  // Set a background color
-	ImGuiWindowFlags livesWindowFlags = ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoScrollbar;
-	ImGui::Begin("Lives", NULL, livesWindowFlags);
-	ImGui::SetWindowPos(ImVec2(cSettings->iWindowWidth * 0.03f, cSettings->iWindowHeight * 0.09f));
-	ImGui::SetWindowSize(ImVec2(100.0f * relativeScale_x, 25.0f * relativeScale_y));
-	cInventoryItem = cInventoryManager->GetItem("Lives");
-	ImGui::Image((void*)(intptr_t)cInventoryItem->GetTextureID(),
-		ImVec2(cInventoryItem->vec2Size.x * relativeScale_x, cInventoryItem->vec2Size.y * relativeScale_y),
-		ImVec2(0, 1), ImVec2(1, 0));
-	ImGui::SameLine();
-	ImGui::SetWindowFontScale(1.5f * relativeScale_y);
-	ImGui::TextColored(ImVec4(1, 1, 0, 1), "%d / %d",
-		cInventoryItem->GetCount(), cInventoryItem->GetMaxCount());
-	ImGui::End();
-	ImGui::PopStyleColor();
+	//ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));  // Set a background color
+	//ImGuiWindowFlags livesWindowFlags = ImGuiWindowFlags_AlwaysAutoResize |
+	//	ImGuiWindowFlags_NoTitleBar |
+	//	ImGuiWindowFlags_NoMove |
+	//	ImGuiWindowFlags_NoResize |
+	//	ImGuiWindowFlags_NoCollapse |
+	//	ImGuiWindowFlags_NoScrollbar;
+	//ImGui::Begin("Lives", NULL, livesWindowFlags);
+	//ImGui::SetWindowPos(ImVec2(cSettings->iWindowWidth * 0.03f, cSettings->iWindowHeight * 0.09f));
+	//ImGui::SetWindowSize(ImVec2(100.0f * relativeScale_x, 25.0f * relativeScale_y));
+	//cInventoryItem = cInventoryManager->GetItem("Lives");
+	//ImGui::Image((void*)(intptr_t)cInventoryItem->GetTextureID(),
+	//	ImVec2(cInventoryItem->vec2Size.x * relativeScale_x, cInventoryItem->vec2Size.y * relativeScale_y),
+	//	ImVec2(0, 1), ImVec2(1, 0));
+	//ImGui::SameLine();
+	//ImGui::SetWindowFontScale(1.5f * relativeScale_y);
+	//ImGui::TextColored(ImVec4(1, 1, 0, 1), "%d / %d",
+	//	cInventoryItem->GetCount(), cInventoryItem->GetMaxCount());
+	//ImGui::End();
+	//ImGui::PopStyleColor();
 
 	// Render the inventory items
 	ImGuiWindowFlags inventoryWindowFlags = ImGuiWindowFlags_AlwaysAutoResize |
@@ -273,14 +304,14 @@ void CGUI_Scene3D::Update(const double dElapsedTime)
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoScrollbar;
-	if (cPlayer3D->GetWeapon() == (CPistol*)cPlayer3D->GetWeapon())
+	if (nullptr != dynamic_cast<CPistol*>(cPlayer3D->GetWeapon()))
 	{
 		cInventoryItem = cInventoryManager->GetItem("Pistol");
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));  // Set a background color
-		ImGui::Begin("Image", NULL, inventoryWindowFlags);
+		ImGui::Begin("Image1", NULL, inventoryWindowFlags);
 		ImGui::SetWindowPos(ImVec2(cSettings->iWindowWidth * 0.03f, cSettings->iWindowHeight * 0.9f));
 		ImGui::SetWindowSize(ImVec2(200.0f * relativeScale_x, 25.0f * relativeScale_y));
-		ImGui::Image((void*)(intptr_t)cInventoryItem->GetTextureID(), //image of pistol
+		ImGui::Image((void*)(intptr_t)cInventoryItem->GetTextureID(), //image of weapon
 			ImVec2(cInventoryItem->vec2Size.x * relativeScale_x, cInventoryItem->vec2Size.y * relativeScale_y),
 			ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::SameLine();
@@ -295,6 +326,31 @@ void CGUI_Scene3D::Update(const double dElapsedTime)
 		ImGui::End();
 		ImGui::PopStyleColor();
 	}
+	else if (nullptr != dynamic_cast<CM4A1*>(cPlayer3D->GetWeapon()))
+	{
+		cInventoryItem = cInventoryManager->GetItem("M4A1");
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));  // Set a background color
+		ImGui::Begin("Image2", NULL, inventoryWindowFlags);
+		ImGui::SetWindowPos(ImVec2(cSettings->iWindowWidth * 0.03f, cSettings->iWindowHeight * 0.9f));
+		ImGui::SetWindowSize(ImVec2(200.0f * relativeScale_x, 25.0f * relativeScale_y));
+		ImGui::Image((void*)(intptr_t)cInventoryItem->GetTextureID(), //image of weapon
+			ImVec2(cInventoryItem->vec2Size.x * relativeScale_x, cInventoryItem->vec2Size.y * relativeScale_y),
+			ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::SameLine();
+		ImGui::SetWindowFontScale(1.5f * relativeScale_y);
+		if (cPlayer3D->GetWeapon()->getReloadTime() <= 0.f)
+		{
+			ImGui::TextColored(ImVec4(1, 1, 0, 1), "Ammo : %d / %d",
+				cPlayer3D->GetWeapon()->GetMagRound(), cPlayer3D->GetWeapon()->GetMaxMagRound());
+		}
+		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Total Ammo : %d / %d",
+			cPlayer3D->GetWeapon()->GetTotalRound(), cPlayer3D->GetWeapon()->GetMaxTotalRound());
+		ImGui::End();
+		ImGui::PopStyleColor();
+	}
+
+
+
 	//Render player's coordinates
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));  // Set a background color
 	ImGui::Begin("PlayerPos", NULL, inventoryWindowFlags);
@@ -311,10 +367,71 @@ void CGUI_Scene3D::Update(const double dElapsedTime)
 
 	ImGui::End();
 
-	
-	
 }
 
+void CGUI_Scene3D::updatePause(float dElapsedTime)
+{
+
+	// Start the Dear ImGui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGuiWindowFlags window_flags = 0;
+	window_flags |= ImGuiWindowFlags_NoTitleBar;
+	window_flags |= ImGuiWindowFlags_NoScrollbar;
+	//window_flags |= ImGuiWindowFlags_MenuBar;
+	window_flags |= ImGuiWindowFlags_NoBackground;
+	window_flags |= ImGuiWindowFlags_NoMove;
+	window_flags |= ImGuiWindowFlags_NoCollapse;
+	window_flags |= ImGuiWindowFlags_NoNav;
+
+	float buttonWidth = 180;
+	float buttonHeight = 80;
+	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+	{
+		static float f = 0.0f;
+		static int counter = 0;
+
+		// Create a window called "Hello, world!" and append into it.
+		ImGui::Begin("Pause Menu", NULL, window_flags);
+		ImGui::SetWindowPos(ImVec2(CSettings::GetInstance()->iWindowWidth / 2.0f - buttonWidth / 2.0f,
+			CSettings::GetInstance()->iWindowHeight / 3.0f));                // Set the top-left of the window at (10,10)
+		ImGui::SetWindowSize(ImVec2((float)CSettings::GetInstance()->iWindowWidth, (float)CSettings::GetInstance()->iWindowHeight));
+		//Added rounding for nicer effect
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.FrameRounding = 200.0f;
+
+		// Add codes for Start button here
+		if (ImGui::ImageButton(Resume, ImVec2(buttonWidth, buttonHeight), ImVec2(0, 0), ImVec2(1, 1), 1)) {
+			//Load into the game
+			glfwSetInputMode(CSettings::GetInstance()->pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			CScene3D::GetInstance()->setPause(false);
+		}
+
+		// Add codes for Exit button here
+		if (ImGui::ImageButton(Exit, ImVec2(buttonWidth, buttonHeight), ImVec2(0.0, 0.0), ImVec2(1.0, 1.0), 1))
+		{
+			// Reset the CKeyboardController
+			CKeyboardController::GetInstance()->Reset();
+
+
+			//CSoundController::GetInstance()->S
+
+			// Load the menu state
+			cout << "Quitting to main menu" << endl;
+
+			CGameStateManager::GetInstance()->SetActiveGameState("MenuState");
+		}
+
+		ImGui::End();
+	}
+}
+
+void CGUI_Scene3D::SetWin(bool w)
+{
+	win = w;
+}
 
 /**
  @brief Set up the OpenGL display environment before rendering
@@ -353,4 +470,9 @@ void CGUI_Scene3D::Render(void)
  */
 void CGUI_Scene3D::PostRender(void)
 {
+}
+
+void CGUI_Scene3D::SetNoAmmo(bool b)
+{
+	NoAmmo = true;
 }

@@ -61,6 +61,9 @@ public:
 	// PrintSelf
 	virtual void PrintSelf(void);
 
+	//virtual void GetMaxHeightTime(glm::vec3 v0, glm::vec3 g);
+
+
 	// List of CProjectiles
 	std::vector<CProjectile*> vProjectile;
 

@@ -12,6 +12,10 @@
 // Include CCameraEffectsManager
 #include "../CameraEffects/CameraEffectsManager.h"
 
+#include "Player3D.h"
+#include "Enemy3D.h"
+#include "EntityFactory.h"
+
 #include <iostream>
 using namespace std;
 
@@ -163,13 +167,13 @@ bool CSolidObjectManager::Update(const double dElapsedTime)
 	std::list<CSolidObject*>::iterator it, end;
 
 	// Update all CSolidObject
-	end = lSolidObject.end();
-	for (it = lSolidObject.begin(); it != end; ++it)
-	{
-		(*it)->Update(dElapsedTime);
-	}
+end = lSolidObject.end();
+for (it = lSolidObject.begin(); it != end; ++it)
+{
+	(*it)->Update(dElapsedTime);
+}
 
-	return true;
+return true;
 }
 
 /**
@@ -190,6 +194,7 @@ bool CSolidObjectManager::CheckForCollision(void)
 		// If the entity is not active, then skip it
 		if ((*it)->GetStatus() == false)
 			continue;
+
 
 		for (it_other = it; it_other != end; ++it_other)
 		{
@@ -215,37 +220,58 @@ bool CSolidObjectManager::CheckForCollision(void)
 						((*it_other)->GetType() <= CSolidObject::TYPE::OTHERS))
 					)
 				{
+
 					(*it)->RollbackPosition();
 					(*it_other)->RollbackPosition();
+					(*it)->SetHP((*it)->GetHP() - 5);
 					bResult = true;
 					cout << "** Collision between Player and an Entity ***" << endl;
 					break;
 				}
 				else if (
-						(((*it)->GetType() >= CSolidObject::TYPE::NPC) &&
+					(((*it)->GetType() >= CSolidObject::TYPE::NPC) &&
 						((*it)->GetType() <= CSolidObject::TYPE::OTHERS))
-						&&
-						(((*it_other)->GetType() >= CSolidObject::TYPE::NPC) &&
+					&&
+					(((*it_other)->GetType() >= CSolidObject::TYPE::NPC) &&
 						((*it_other)->GetType() <= CSolidObject::TYPE::OTHERS))
 					)
 				{
-					(*it)->RollbackPosition();
-					(*it_other)->RollbackPosition();
+					//(*it)->RollbackPosition();
+					//(*it_other)->RollbackPosition();
 					cout << "** Collision between 2 Entities ***" << endl;
 					break;
 				}
 				// Check if a movable entity collides with a non-movable entity
 				if (
-						(((*it)->GetType() >= CSolidObject::TYPE::PLAYER) &&
-							((*it)->GetType() <= CSolidObject::TYPE::OTHERS))
-						&&
-						((*it_other)->GetType() == CSolidObject::TYPE::STRUCTURE)
+					(((*it)->GetType() >= CSolidObject::TYPE::PLAYER) &&
+						((*it)->GetType() <= CSolidObject::TYPE::OTHERS))
+					&&
+					((*it_other)->GetType() == CSolidObject::TYPE::STRUCTURE)
 					)
 				{
 					(*it)->RollbackPosition();
 					if (((*it)->GetType() == CSolidObject::TYPE::PLAYER))
 						bResult = true;
 					cout << "** Collision between Entity and Structure ***" << endl;
+					break;
+				}
+
+				if (
+					(((*it)->GetType() == CSolidObject::TYPE::PLAYER))
+					&&
+					((*it_other)->GetType() == CSolidObject::TYPE::PICKUP)
+					)
+				{
+					if ((*it)->GetHP() < 100) 
+					{
+						(*it)->SetHP((*it)->GetHP() + 20);
+						if ((*it)->GetHP() >= 100)
+						{
+							(*it)->SetHP(100); // So player will always have a max hp of 100
+						}
+						(*it_other)->SetStatus(false); // Set to false
+					}
+					cout << "** Collision between Entity and Pickup ***" << endl;
 					break;
 				}
 			}
@@ -278,6 +304,12 @@ bool CSolidObjectManager::CheckForCollision(void)
 					// If this projectile is fired by the player, then skip it
 					if ((cProjectileManager->vProjectile[i])->GetSource() == (*it))
 						continue;
+					if ((CEnemy3D*)(*it) == nullptr)
+					{
+						continue;
+					}
+					(*it)->SetHP((*it)->GetHP() - ((CEnemy3D*)(cProjectileManager->vProjectile[i])->GetSource())->GetWeapon()->GetDamage());
+					cout << (*it)->GetHP() << endl;
 					(cProjectileManager->vProjectile[i])->SetStatus(false);
 					cout << "** RayBoxCollision between Player and Projectile ***" << endl;
 					bResult = true;
@@ -288,7 +320,20 @@ bool CSolidObjectManager::CheckForCollision(void)
 					// If this projectile is fired by the NPC, then skip it
 					if ((cProjectileManager->vProjectile[i])->GetSource() == (*it))
 						continue;
-					(*it)->SetStatus(false);
+
+					(*it)->SetHP((*it)->GetHP() - CPlayer3D::GetInstance()->GetWeapon()->GetDamage());
+					cout << (*it)->GetHP() << endl;
+					if ((*it)->GetHP() <= 0)
+					{
+						srand(time(NULL));
+						int chance;
+						chance = rand() % 4 + 1;
+						if (chance == 1)
+						{
+							EntityFactory::SpawnHealth((*it)->GetPosition());
+							(*it)->SetStatus(false);
+						}
+					}
 					(cProjectileManager->vProjectile[i])->SetStatus(false);
 					cout << "** RayBoxCollision between NPC and Projectile ***" << endl;
 					break;
@@ -309,15 +354,38 @@ bool CSolidObjectManager::CheckForCollision(void)
 			{
 				if ((*it)->GetType() == CSolidObject::TYPE::PLAYER)
 				{
+					if ((cProjectileManager->vProjectile[i])->GetSource() == (*it))
+						continue;
+					if ((CEnemy3D*)(*it) == nullptr)
+					{
+						continue;
+					}
+					(*it)->SetHP((*it)->GetHP() - ((CEnemy3D*)(cProjectileManager->vProjectile[i])->GetSource())->GetWeapon()->GetDamage());
+					cout << (*it)->GetHP() << endl;
 					(cProjectileManager->vProjectile[i])->SetStatus(false);
+					
 					cout << "** BoxBoxCollision between Player and Projectile ***" << endl;
 					bResult = true;
-					
 					break;
 				}
 				else if ((*it)->GetType() == CSolidObject::TYPE::NPC)
 				{
-					(*it)->SetStatus(false);
+					if ((cProjectileManager->vProjectile[i])->GetSource() == (*it))
+						continue;
+					(*it)->SetHP((*it)->GetHP() - CPlayer3D::GetInstance()->GetWeapon()->GetDamage());
+					cout << (*it)->GetHP() << endl;
+					if ((*it)->GetHP() <= 0)
+					{
+						srand(time(NULL));
+						int chance;
+						chance = rand() % 4 + 1;
+						cout << chance << endl;
+						if (chance == 1)
+						{
+							EntityFactory::SpawnHealth((*it)->GetPosition());
+							(*it)->SetStatus(false);
+						}
+					}
 					(cProjectileManager->vProjectile[i])->SetStatus(false);
 					cout << "** BoxBoxCollision between NPC and Projectile ***" << endl;
 					break;

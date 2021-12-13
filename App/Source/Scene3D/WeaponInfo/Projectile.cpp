@@ -16,6 +16,16 @@
 #include <iostream>
 using namespace std;
 
+void CProjectile::SetProjType(PROJECTILE_TYPE type)
+{
+	pType = type;
+}
+
+CProjectile::PROJECTILE_TYPE CProjectile::GetProjType()
+{
+	return pType;
+}
+
 /**
 @brief Default Constructor
 */
@@ -51,14 +61,14 @@ bool CProjectile::Init(	glm::vec3 vec3Position,
 	CSolidObject::Init();
 
 	// Set the type
-	SetType(CEntity3D::TYPE::PROJECTILE);
+	SetProjType(CProjectile::PROJECTILE_TYPE::BULLET);
 
 	// Set the attributes for this projectile
 	this->vec3Position = vec3Position;
 	this->vec3Front = vec3Front;
 	this->dLifetime = dLifetime;
 	this->fSpeed = fSpeed;
-	vec4Colour = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
+	vec4Colour = glm::vec4(0.184f, 0.310f, 0.310f, 1.0f);
 
 	// Generate and bind the VAO
 	glGenVertexArrays(1, &VAO);
@@ -214,7 +224,7 @@ bool CProjectile::Update(const double dElapsedTime)
 	vec3PreviousPosition = vec3Position;
 	// Update Position
 	vec3Position = vec3Position + vec3Front * (float)dElapsedTime * fSpeed;
-
+	
 	// Render the projectile
 	// Create transformations
 	model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first

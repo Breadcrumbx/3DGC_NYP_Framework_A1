@@ -46,7 +46,7 @@ public:
 		RIGHT,
 		NUM_MOVEMENTS
 	};
-
+	
 	// Default Constructor
 	CEnemy3D(void);
 
@@ -60,7 +60,7 @@ public:
 	virtual ~CEnemy3D(void);
 
 	// Initialise this class instance
-	bool Init(void);
+	bool Init(std::string obj);
 
 	// Set model
 	virtual void SetModel(const glm::mat4 model);
@@ -104,11 +104,17 @@ public:
 	// PostRender
 	virtual void PostRender(void);
 
+	virtual void SetHP(int hp);
+
+	virtual int GetHP();
+
 protected:
 	// Enemy Attributes
 	glm::vec3 vec3Up;
 	glm::vec3 vec3Right;
 	glm::vec3 vec3WorldUp;
+
+
 	// Euler Angles
 	float fYaw;
 	float fPitch;

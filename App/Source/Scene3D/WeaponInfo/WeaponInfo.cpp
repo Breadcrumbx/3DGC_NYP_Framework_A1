@@ -14,6 +14,9 @@
 // Include CProjectileManager
 #include "ProjectileManager.h"
 
+#include "../GUI_Scene3D.h"
+
+
 #include <iostream>
 using namespace std;
 
@@ -30,6 +33,7 @@ CWeaponInfo::CWeaponInfo()
 	, dReloadTime(0.0f)
 	, dMaxReloadTime(5.0f)
 	, bFire(true)
+	, damage(0)
 {
 }
 
@@ -174,6 +178,7 @@ bool CWeaponInfo::GetCanFire(void) const
 bool CWeaponInfo::Init(void)
 {
 	Recoil = 0;
+	ReloadMovement = 0;
 	// The number of ammunition in a magazine for this weapon
 	iMagRounds = 1;
 	// The maximum number of ammunition for this magazine for this weapon
@@ -199,7 +204,6 @@ bool CWeaponInfo::Init(void)
 	model = glm::translate(model, glm::vec3(vec3Position.x, vec3Position.y, vec3Position.z));
 	model = glm::rotate(model, fRotationAngle, vec3RotationAxis);
 	model = glm::scale(model, vec3Scale);
-	
 
 	return true;
 }
@@ -213,13 +217,16 @@ bool CWeaponInfo::Update(const double dt)
 {
 	// Update the model matrix
 	model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-	model = glm::translate(model, glm::vec3(vec3Position.x, vec3Position.y, vec3Position.z + Recoil));
+	model = glm::translate(model, glm::vec3(vec3Position.x, vec3Position.y + ReloadMovement, vec3Position.z + Recoil));
 	model = glm::scale(model, vec3Scale);
 	model = glm::rotate(model, fRotationAngle, vec3RotationAxis);
 
 	//model = glm::rotate(model, ShootAngle, glm::vec3(1,0,0));
 
+
+	// Using interpolation to smoothly go back to 0 instead of teleporting back to 0
 	Recoil = Math::Lerp(Recoil, 0.f, (float)dt);
+	ReloadMovement = Math::Lerp(ReloadMovement, 0.f, (float)dt * 1.5f);
 
 	// If the weapon can fire, then just fire and return
 	if (bFire)
@@ -228,6 +235,10 @@ bool CWeaponInfo::Update(const double dt)
 	// Update the dReloadTime
 	if (dReloadTime >= 0.0f)
 	{
+		ReloadMovement -= ReloadAmt;
+		
+		ReloadMovement = Math::Clamp(ReloadMovement, ReloadAmt * -1.f, 0.f);
+		//cout << ReloadMovement << endl;
 		// Reduce the dReloadTime
 		dReloadTime -= dt;
 		// Return true since we have already updated the dReloadTime
@@ -259,13 +270,13 @@ bool CWeaponInfo::Discharge(glm::vec3 vec3Position,
 							glm::vec3 vec3Front, 
 							CSolidObject* pSource)
 {
-	
 	if (bFire)
 	{
 
 		// If there is still ammo in the magazine, then fire
 		if (iMagRounds > 0)
 		{
+			CSoundController::GetInstance()->PlaySoundByID(4);
 			Recoil += RecoilAmt;
 			Recoil = Math::Clamp(Recoil, 0.f, RecoilAmt * 2);
 			// Create a projectile. 
@@ -285,8 +296,15 @@ bool CWeaponInfo::Discharge(glm::vec3 vec3Position,
 
 			return true;
 		}
+		else
+		{
+			CGUI_Scene3D::GetInstance()->SetNoAmmo(true);
+		}
 	}
-
+	//if (pSource == dynamic_cast<CPlayer3D*>(pSource))
+	//{
+	//	
+	//}
 	//cout << "Unable to discharge weapon." << endl;
 
 	return false;
@@ -303,6 +321,8 @@ void CWeaponInfo::Reload(void)
 	// Check if there is enough bullets
 	if (iMagRounds < iMaxMagRounds)
 	{
+		
+	
 		if (iMaxMagRounds - iMagRounds <= iTotalRounds)
 		{
 			iTotalRounds -= iMaxMagRounds - iMagRounds;
@@ -433,4 +453,9 @@ void CWeaponInfo::PrintSelf(void)
 	cout << "dTimeBetweenShots\t:\t" << dTimeBetweenShots << endl;
 	cout << "dElapsedTime\t\t:\t" << dElapsedTime << endl;
 	cout << "bFire\t\t:\t" << bFire << endl;
+}
+
+int CWeaponInfo::GetDamage()
+{
+	return damage;
 }

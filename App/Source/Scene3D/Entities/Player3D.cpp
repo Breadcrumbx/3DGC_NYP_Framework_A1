@@ -36,6 +36,7 @@ CPlayer3D::CPlayer3D(void)
 	, fCameraSwayDeltaAngle(0.25f)
 	, bCameraSwayDirection(false)	// false = left, true = right
 	, bCameraSwayActive(true)
+	
 {
 	// Set the default position so it is above the ground
 	vec3Position = glm::vec3(0.0f, 0.5f, 0.0f);
@@ -51,10 +52,10 @@ CPlayer3D::CPlayer3D(void)
  @param yaw A const float variable which contains the yaw of the camera
  @param pitch A const float variable which contains the pitch of the camera
  */
-CPlayer3D::CPlayer3D(	const glm::vec3 vec3Position,
-						const glm::vec3 vec3Front,
-						const float fYaw,
-						const float fPitch)
+CPlayer3D::CPlayer3D(const glm::vec3 vec3Position,
+	const glm::vec3 vec3Front,
+	const float fYaw,
+	const float fPitch)
 	: vec3Up(glm::vec3(0.0f, 1.0f, 0.0f))
 	, vec3Right(glm::vec3(1.0f, 1.0f, 0.0f))
 	, vec3WorldUp(glm::vec3(0.0f, 1.0f, 0.0f))
@@ -123,6 +124,9 @@ bool CPlayer3D::Init(void)
 
 	// Set the type
 	SetType(CEntity3D::TYPE::PLAYER);
+	SetHP(100);
+
+
 
 	// Generate and bind the VAO
 	glGenVertexArrays(1, &VAO);
@@ -314,6 +318,14 @@ void CPlayer3D::ProcessMovement(const PLAYERMOVEMENT direction, const float delt
 	{
 		fMovementSpeed = 1.f;
 		cCamera->vec3Offset = vec3Up * -0.1f;
+	}
+	else if (direction == PLAYERMOVEMENT::SPRINTING)
+	{
+		fMovementSpeed = 5.f;
+	}
+	else
+	{
+		fMovementSpeed = 2.5f;
 	}
 		
 	// Indicate that camera sway is to be updated
@@ -550,3 +562,14 @@ void CPlayer3D::PrintSelf(void)
 	cout << "CPlayer3D::PrintSelf()" << endl;
 	cout << "========================" << endl;
 }
+
+void CPlayer3D::SetHP(int hp)
+{
+	this->hp = hp;
+}
+
+int CPlayer3D::GetHP()
+{
+	return this->hp;
+}
+

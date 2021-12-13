@@ -34,6 +34,7 @@ public:
 					const int ID,
 					const bool bPreload = true,
 					const bool bIsLooped = false,
+					const bool isOverlap = false,
 					CSoundInfo::SOUNDTYPE eSoundType = CSoundInfo::SOUNDTYPE::_2D,
 					vec3df vec3dfSoundPos = vec3df(0.0f, 0.0f, 0.0f));
 

@@ -14,6 +14,7 @@
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\GameStateManagement\GameStateManager.cpp" />
     <ClCompile Include="Source\GameStateManagement\IntroState.cpp" />
+    <ClCompile Include="Source\GameStateManagement\LoseState.cpp" />
     <ClCompile Include="Source\GameStateManagement\MenuState.cpp" />
     <ClCompile Include="Source\GameStateManagement\PauseState.cpp" />
     <ClCompile Include="Source\GameStateManagement\Play3DGameState.cpp" />
@@ -37,7 +38,11 @@
     <ClCompile Include="Source\Scene3D\CameraEffects\CameraShake.cpp" />
     <ClCompile Include="Source\Scene3D\CameraEffects\CrossHair.cpp" />
     <ClCompile Include="Source\Scene3D\CameraEffects\ScopeScreen.cpp" />
+    <ClCompile Include="Source\Scene3D\Entities\Attributes.cpp" />
     <ClCompile Include="Source\Scene3D\Entities\Enemy3D.cpp" />
+    <ClCompile Include="Source\Scene3D\Entities\EnemyFactory.cpp" />
+    <ClCompile Include="Source\Scene3D\Entities\EntityFactory.cpp" />
+    <ClCompile Include="Source\Scene3D\Entities\Health.cpp" />
     <ClCompile Include="Source\Scene3D\Entities\Player3D.cpp" />
     <ClCompile Include="Source\Scene3D\Entities\SolidObject.cpp" />
     <ClCompile Include="Source\Scene3D\Entities\SolidObjectManager.cpp" />
@@ -50,6 +55,7 @@
     <ClCompile Include="Source\Scene3D\Terrain\Terrain.cpp" />
     <ClCompile Include="Source\Scene3D\Terrain\Texture.cpp" />
     <ClCompile Include="Source\Scene3D\Terrain\vertexBufferObject.cpp" />
+    <ClCompile Include="Source\Scene3D\WeaponInfo\Artillery.cpp" />
     <ClCompile Include="Source\Scene3D\WeaponInfo\M4A1.cpp" />
     <ClCompile Include="Source\Scene3D\WeaponInfo\Pistol.cpp" />
     <ClCompile Include="Source\Scene3D\WeaponInfo\Projectile.cpp" />
@@ -63,6 +69,7 @@
     <ClInclude Include="Source\GameStateManagement\GameStateBase.h" />
     <ClInclude Include="Source\GameStateManagement\GameStateManager.h" />
     <ClInclude Include="Source\GameStateManagement\IntroState.h" />
+    <ClInclude Include="Source\GameStateManagement\LoseState.h" />
     <ClInclude Include="Source\GameStateManagement\MenuState.h" />
     <ClInclude Include="Source\GameStateManagement\PauseState.h" />
     <ClInclude Include="Source\GameStateManagement\Play3DGameState.h" />
@@ -85,7 +92,11 @@
     <ClInclude Include="Source\Scene3D\CameraEffects\CameraShake.h" />
     <ClInclude Include="Source\Scene3D\CameraEffects\CrossHair.h" />
     <ClInclude Include="Source\Scene3D\CameraEffects\ScopeScreen.h" />
+    <ClInclude Include="Source\Scene3D\Entities\Attributes.h" />
     <ClInclude Include="Source\Scene3D\Entities\Enemy3D.h" />
+    <ClInclude Include="Source\Scene3D\Entities\EnemyFactory.h" />
+    <ClInclude Include="Source\Scene3D\Entities\EntityFactory.h" />
+    <ClInclude Include="Source\Scene3D\Entities\Health.h" />
     <ClInclude Include="Source\Scene3D\Entities\Player3D.h" />
     <ClInclude Include="Source\Scene3D\Entities\SolidObject.h" />
     <ClInclude Include="Source\Scene3D\Entities\SolidObjectManager.h" />
@@ -99,6 +110,7 @@
     <ClInclude Include="Source\Scene3D\Terrain\Terrain.h" />
     <ClInclude Include="Source\Scene3D\Terrain\Texture.h" />
     <ClInclude Include="Source\Scene3D\Terrain\vertexBufferObject.h" />
+    <ClInclude Include="Source\Scene3D\WeaponInfo\Artillery.h" />
     <ClInclude Include="Source\Scene3D\WeaponInfo\M4A1.h" />
     <ClInclude Include="Source\Scene3D\WeaponInfo\Pistol.h" />
     <ClInclude Include="Source\Scene3D\WeaponInfo\Projectile.h" />

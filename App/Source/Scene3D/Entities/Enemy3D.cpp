@@ -120,7 +120,7 @@ CEnemy3D::~CEnemy3D(void)
  @brief Initialise this class instance
  @return true is successfully initialised this class instance, else false
  */
-bool CEnemy3D::Init(void)
+bool CEnemy3D::Init(std::string obj)
 {
 	// Call the parent's Init()
 	CSolidObject::Init();
@@ -130,7 +130,8 @@ bool CEnemy3D::Init(void)
 
 	// Initialise the cPlayer3D
 	cPlayer3D = CPlayer3D::GetInstance();
-	
+	// Enemy Default Attributes
+
 
 	
 
@@ -139,12 +140,14 @@ bool CEnemy3D::Init(void)
 	std::vector<glm::vec3> normals;
 	std::vector<ModelVertex> vertex_buffer_data;
 	std::vector<GLuint> index_buffer_data;
+	
 
-	std::string file_path = "Models/Pistol/gun_type64_01.obj";
+
+	std::string file_path = "Models/zombie/" + obj;
 	bool success = CLoadOBJ::LoadOBJ(file_path.c_str(), vertices, uvs, normals, true);
 	if (!success)
 	{
-		cout << "Unable to load Models/Pistol/gun_type64_01.obj" << endl;
+		cout << "Unable to load Models/zombie/" + obj  << endl;
 		return false;
 	}
 
@@ -167,10 +170,10 @@ bool CEnemy3D::Init(void)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	// load and create a texture 
-	iTextureID = CImageLoader::GetInstance()->LoadTextureGetID("Models/Pistol/map_gunType64_01_AO.png", false);
+	iTextureID = CImageLoader::GetInstance()->LoadTextureGetID("Models/zombie/Zombie_Texture.png", false);
 	if (iTextureID == 0)
 	{
-		cout << "Unable to load Models/Pistol/map_gunType64_01_AO.png" << endl;
+		cout << "Unable to load Models/zombie/Zombie_Texture.png" << endl;
 		return false;
 	}
 
@@ -479,16 +482,15 @@ bool CEnemy3D::Update(const double dElapsedTime)
 	// Update the model
 	model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
 	model = glm::translate(model, vec3Position);
-	model = glm::scale(model, vec3Scale);
-	model = glm::rotate(model, glm::radians(fYaw), glm::vec3(0.0f, 1.0f, 0.0f));
-
+	model = glm::scale(model, vec3Scale);	//fYaw
+	model = glm::rotate(model, glm::radians(fYaw + 90), glm::vec3(0.0f, 1.0f, 0.0f));
 	// Update the weapon's position
 	if (cPrimaryWeapon)
 	{
 		cPrimaryWeapon->SetPosition(vec3Position + glm::vec3(0.05f, -0.075f, 0.5f));
 		cPrimaryWeapon->Update(dElapsedTime);
-		glm::mat4 gunModel = model;
-		gunModel = glm::rotate(gunModel, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 gunModel = model;					//90.f
+		gunModel = glm::rotate(gunModel, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		gunModel = glm::translate(gunModel, glm::vec3(0.05f, -0.075f, 0.5f));
 		cPrimaryWeapon->SetModel(gunModel);
 	}
@@ -550,6 +552,9 @@ void CEnemy3D::PostRender(void)
 	CSolidObject::PostRender();
 }
 
+
+
+
 /**
  @brief Calculates the front vector from the Camera's (updated) Euler Angles
  */
@@ -597,4 +602,14 @@ void CEnemy3D::UpdateFrontAndYaw(void)
 	fYaw = glm::degrees(glm::acos(dot(glm::vec3(1.0f, 0.0f, 0.0f), vec3Front)));
 	if (cross(glm::vec3(1.0f, 0.0f, 0.0f), vec3Front).y < 0.0f)
 		fYaw *= -1;
+}
+
+void CEnemy3D::SetHP(int hp)
+{
+	this->hp = hp;
+}
+
+int CEnemy3D::GetHP()
+{
+	return this->hp;
 }

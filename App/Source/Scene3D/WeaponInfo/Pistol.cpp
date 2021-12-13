@@ -37,6 +37,7 @@ bool CPistol::Init(void)
 	CWeaponInfo::Init();
 
 	RecoilAmt = 0.01f;
+	ReloadAmt = 0.04f;
 	// The number of ammunition in a magazine for this weapon
 	iMagRounds = 8;
 	// The maximum number of ammunition for this magazine for this weapon
@@ -52,6 +53,7 @@ bool CPistol::Init(void)
 	dElapsedTime = 0.0;
 	// Boolean flag to indicate if weapon can fire now
 	bFire = true;
+	damage = 10;
 
 	// Call the parent's Init()
 	CEntity3D::Init();

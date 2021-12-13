@@ -64,7 +64,7 @@ bool CMenuState::Init(void)
 	CShaderManager::GetInstance()->activeShader->setInt("texture1", 0);
 
 	//Create Background Entity
-	background = new CBackgroundEntity("Image/MenuBackground.png");
+	background = new CBackgroundEntity("Image/menuback.jpg");
 	background->SetShader("2DShader");
 	background->Init();
 
@@ -87,7 +87,7 @@ bool CMenuState::Init(void)
 	startButtonData.fileName = "Image\\GUI\\PlayButton.png";
 	startButtonData.textureID = il->LoadTextureGetID(startButtonData.fileName.c_str(), false);
 
-	play3DButtonData.fileName = "Image\\GUI\\PlayButton_3D.png";
+	play3DButtonData.fileName = "Image\\GUI\\PlayButton3D.png";
 	play3DButtonData.textureID = il->LoadTextureGetID(play3DButtonData.fileName.c_str(), false);
 
 	exitButtonData.fileName = "Image\\GUI\\ExitButton.png";
@@ -215,7 +215,7 @@ void CMenuState::Render(void)
 {
 	// Clear the screen and buffer
 	glClearColor(0.0f, 0.55f, 1.00f, 1.00f);
-
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//Render Background
 	background->Render();
 

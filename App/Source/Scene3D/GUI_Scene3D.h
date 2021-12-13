@@ -44,6 +44,8 @@
 // Include Minimap
 #include "Minimap/Minimap.h"
 
+#include "System/ImageLoader.h"
+
 // Include CPlayer3D
 #include "Entities\Player3D.h"
 
@@ -78,7 +80,11 @@ public:
 	// PostRender
 	virtual void PostRender(void);
 
-	
+	 void SetNoAmmo(bool b);
+
+	 void updatePause(float dElapsedTime);
+
+	 void SetWin(bool w);
 
 protected:
 	// Constructor
@@ -87,6 +93,10 @@ protected:
 	// Destructor
 	virtual ~CGUI_Scene3D(void);
 
+	bool win;
+
+	bool NoAmmo;
+	float timer = 3.f;
 	// Render Settings
 	glm::mat4 model;
 	glm::mat4 view;
@@ -117,4 +127,6 @@ protected:
 
 	// The handler containing the instance of CPlayer3D
 	CPlayer3D* cPlayer3D;
+
+	ImTextureID Resume, Exit;
 };

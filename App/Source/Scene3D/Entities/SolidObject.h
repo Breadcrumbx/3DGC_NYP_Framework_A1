@@ -16,6 +16,9 @@
 #include <includes/gtc/matrix_transform.hpp>
 #include <includes/gtc/type_ptr.hpp>
 
+//#include "Attributes.h"
+#include <iostream>
+
 #include <string>
 using namespace std;
 
@@ -61,7 +64,13 @@ public:
 	// Print Self
 	virtual void PrintSelf(void);
 
+	virtual void SetHP(int hp);
+
+	virtual int GetHP();
+
+
 protected:
 	// The number of indices in the model loaded in
+	int hp;
 	unsigned int iIndicesSize;
 };

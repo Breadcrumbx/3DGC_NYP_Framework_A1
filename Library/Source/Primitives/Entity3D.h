@@ -22,10 +22,11 @@
 //CS: Include Mesh.h to use to draw (include vertex and index buffers)
 #include "Mesh.h"
 
+
 #include <string>
 using namespace std;
 
-class CEntity3D
+class CEntity3D 
 {
 public:
 	enum TYPE
@@ -35,6 +36,7 @@ public:
 		OTHERS,		// Default value: Other entities such as ground and skybox
 		STRUCTURE,	// Buildings etc
 		PROJECTILE,
+		PICKUP,
 		NUM_TYPES
 	};
 
@@ -107,6 +109,8 @@ protected:
 
 	// Name of Shader Program instance
 	std::string sShaderName;
+
+
 
 	//CS: The mesh that is used to draw objects
 	CMesh* mesh;

@@ -41,6 +41,9 @@
 
 #include "Entities/Structure3D.h"
 
+#include "Entities/Health.h"
+
+
 #include "Entities/Enemy3D.h"
 
 #include "GUI_Scene3D.h"
@@ -65,6 +68,11 @@ public:
 
 	// PostRender
 	void PostRender(void);
+
+	void setPause(bool p);
+
+
+	float GetTimer();
 
 protected:
 	// The handler to the CSettings
@@ -105,6 +113,10 @@ protected:
 
 	//GUI_Scene3D
 	CGUI_Scene3D* cGUI_Scene3D;
+
+	bool isPaused;
+	float timer = 60.f;
+	float spawntimer;
 	// Constructor
 	CScene3D(void);
 	// Destructor

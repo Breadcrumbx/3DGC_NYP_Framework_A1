@@ -58,18 +58,18 @@ bool CPlay3DGameState::Init(void)
  */
 bool CPlay3DGameState::Update(const double dElapsedTime)
 {
-	if (CKeyboardController::GetInstance()->IsKeyReleased(GLFW_KEY_F10))
-	{
-		// Reset the CKeyboardController
-		CKeyboardController::GetInstance()->Reset();
+	//if (CKeyboardController::GetInstance()->IsKeyReleased(GLFW_KEY_ESCAPE))
+	//{
+	//	// Reset the CKeyboardController
+	//	CKeyboardController::GetInstance()->Reset();
 
-		// Load the menu state
-		cout << "Loading MenuState" << endl;
-		CGameStateManager::GetInstance()->SetActiveGameState("MenuState");
-		CGameStateManager::GetInstance()->OffPauseGameState();
-		return true;
-	}
-	else if (CKeyboardController::GetInstance()->IsKeyReleased(GLFW_KEY_ESCAPE))
+	//	// Load the menu state
+	//	cout << "Loading MenuState" << endl;
+	//	CGameStateManager::GetInstance()->SetActiveGameState("MenuState");
+	//	CGameStateManager::GetInstance()->OffPauseGameState();
+	//	return true;
+	//}
+	if (CKeyboardController::GetInstance()->IsKeyReleased(GLFW_KEY_F10))
 	{
 		// Reset the CKeyboardController
 		CKeyboardController::GetInstance()->Reset();

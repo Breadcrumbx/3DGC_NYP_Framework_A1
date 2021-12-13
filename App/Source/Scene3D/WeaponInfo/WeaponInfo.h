@@ -21,6 +21,9 @@
 
 #include "../App/Source/Scene3D/MyMath.h"
 
+#include "../App/Source/SoundController/SoundController.h"
+
+
 class CWeaponInfo : public CEntity3D
 {
 public:
@@ -93,6 +96,8 @@ public:
 	// Print Self
 	virtual void PrintSelf(void);
 
+	virtual int GetDamage();
+
 protected:
 	// The number of ammunition in a magazine for this weapon
 	int iMagRounds;
@@ -114,10 +119,21 @@ protected:
 	// Boolean flag to indicate if weapon can fire now
 	bool bFire;
 
+	// Weapon's Damage
+	int damage;
+
+	CSoundController* cSoundController;
+
 	float ShootAngle;
 
-	float Recoil;
+	
+	// Reload animation
+	float ReloadMovement;
+	float ReloadAmt;
 
+
+	// Recoil animation
+	float Recoil;
 	float RecoilAmt;
 
 	// For Renderings

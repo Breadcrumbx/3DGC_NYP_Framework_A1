@@ -27,6 +27,10 @@
 //Camera effects
 #include "CameraEffects/CameraShake.h"
 
+//Enemy factory which spawns the enemies
+#include "Entities/EnemyFactory.h"
+
+#include "../GameStateManagement/GameStateManager.h"
 
 #include <iostream>
 using namespace std;
@@ -47,6 +51,7 @@ CScene3D::CScene3D(void)
 	, cSkyBox(NULL)
 	, cTerrain(NULL)
 	, cProjectileManager(NULL)
+	, timer (60.f)
 {
 }
 
@@ -134,12 +139,14 @@ CScene3D::~CScene3D(void)
  */ 
 bool CScene3D::Init(void)
 {
+	
 	cSettings = CSettings::GetInstance();
 	float fCheckHeight;
 	// configure global opengl state
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-
+	
+	
 	// Configure the camera
 	cCamera = CCamera::GetInstance();
 	cCamera->vec3Position = glm::vec3(0.0f, 0.5f, 3.0f);
@@ -170,6 +177,7 @@ bool CScene3D::Init(void)
 	cPlayer3D->InitCollider("Shader3D_Line", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 	cPlayer3D->AttachCamera(cCamera);
 	
+	
 
 	//Assign a cPistol to the cPlayer3D
 	CPistol* cPistol = new CPistol();
@@ -192,8 +200,16 @@ bool CScene3D::Init(void)
 	cM4A1->Init();
 	cM4A1->SetShader("Shader3D_Model");
 	cPlayer3D->SetWeapon(1, cM4A1);
+
+
 	//Add the cPlayer3D to the cSolidObjectManager
 	cSolidObjectManager->Add(cPlayer3D);
+
+
+	
+
+
+
 
 	// Initiliase the cProjectileManager
 	cProjectileManager = CProjectileManager::GetInstance();
@@ -204,33 +220,42 @@ bool CScene3D::Init(void)
 
 	//Structure
 	
-	fCheckHeight = cTerrain->GetHeight(2.0f, -2.0f);
+	/*fCheckHeight = cTerrain->GetHeight(2.0f, -2.0f);
 	CStructure3D* cStructure3D = new CStructure3D(glm::vec3(2.0f, fCheckHeight, -2.0f));
 	cStructure3D->SetShader("Shader3D");
 	cStructure3D->Init();
 	cStructure3D->InitCollider("Shader3D_Line",glm::vec4(0.0f,0.0f,1.0f,1.0f));
 
-	cSolidObjectManager->Add(cStructure3D);
+	cSolidObjectManager->Add(cStructure3D);*/
 
-	//Enemy
-	fCheckHeight = cTerrain->GetHeight(0.0f, -10.f);
-	CEnemy3D* cEnemy3D = new CEnemy3D(glm::vec3(0.0f,fCheckHeight,10.f));
-	cEnemy3D->SetShader("Shader3D");
-	cEnemy3D->Init();
-	cEnemy3D->InitCollider("Shader3D_Line", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	//Health
 	
-	//Assign pistol to cEnemy3D
-	CPistol* cEnemyPistol = new CPistol();
-	cEnemyPistol->SetScale(glm::vec3(1.75f, 1.75f, 1.75f));
-	//Initialise the instance
-	cEnemyPistol->Init();
-	cEnemyPistol->SetShader("Shader3D_Model");
-	cEnemyPistol->SetMagRound(1); // Setting the amount of maground enemy has in his gun
-	cEnemy3D->SetWeapon(0, cEnemyPistol);
 
-	//Add the cEnemy3D to the cSolidObjectManager
-	cSolidObjectManager->Add(cEnemy3D);
+	////Enemy
+	//fCheckHeight = cTerrain->GetHeight(0.0f, -10.f);
+	//CEnemy3D* cEnemy3D = new CEnemy3D(glm::vec3(0.0f,fCheckHeight,10.f));
+	//cEnemy3D->SetShader("Shader3D");
+	//cEnemy3D->Init();
+	//cEnemy3D->InitCollider("Shader3D_Line", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	//
+	////Assign pistol to cEnemy3D
+	//CPistol* cEnemyPistol = new CPistol();
+	//cEnemyPistol->SetScale(glm::vec3(1.75f, 1.75f, 1.75f));
+	////Initialise the instance
+	//cEnemyPistol->Init();
+	//cEnemyPistol->SetShader("Shader3D_Model");
+	//cEnemyPistol->SetMagRound(1); // Setting the amount of maground enemy has in his gun
+	//cEnemy3D->SetWeapon(0, cEnemyPistol);
+
+	////Add the cEnemy3D to the cSolidObjectManager
+	//cSolidObjectManager->Add(cEnemy3D);
+
+	//Spawns enemy
+	EnemyFactory::SpawnEnemy(5);
+
 	
+
+
 
 	//Load the GUI Entities
 	// Store the cGUI_Scene3D singleton instance here
@@ -262,6 +287,11 @@ bool CScene3D::Init(void)
 	cSoundController->LoadSound(FileSystem::getPath("Sounds\\Sound_Bell.ogg"), 1, true);
 	cSoundController->LoadSound(FileSystem::getPath("Sounds\\Sound_Explosion.ogg"), 2, true);
 	cSoundController->LoadSound(FileSystem::getPath("Sounds\\Sound_Jump.ogg"), 3, true);
+	cSoundController->LoadSound(FileSystem::getPath("Sounds\\Pistol.wav"), 4, true,false,true);
+
+	
+	spawntimer = 25.f;
+	isPaused = false;
 
 	return true;
 }
@@ -273,17 +303,52 @@ bool CScene3D::Init(void)
 */
 bool CScene3D::Update(const double dElapsedTime)
 {
+	//if (cPlayer3D->GetHP() <= 0)
+	//{
+	//	CGameStateManager::GetInstance()->SetActiveGameState("LoseState");
+	//}
+	//Pause
+	timer -= dElapsedTime;
+	spawntimer -= dElapsedTime;
+	if (spawntimer <= 0.f)
+	{
+		EnemyFactory::SpawnEnemy(2);
+		spawntimer = 25.f;
+	}
+
+	if (timer <= 0)
+	{
+		timer = 0;
+		cGUI_Scene3D->SetWin(true);
+	}
+
+	if (cKeyboardController->IsKeyPressed(GLFW_KEY_ESCAPE))
+	{
+		isPaused = !isPaused;
+		if (!isPaused)
+			glfwSetInputMode(cSettings->pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		else
+			glfwSetInputMode(cSettings->pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
+		//cSettings->bShowMousePointer = !cSettings->bShowMousePointer;
+	}
+
+	if (isPaused)
+	{
+		cGUI_Scene3D->updatePause(dElapsedTime);
+		return true;
+	}
+
+
 	//Store the current position, if rollback is needed.
 	cPlayer3D->StorePositionForRollback();
 	//Update the projectiles
 	cProjectileManager->Update(dElapsedTime);
 	/*cout << boolalpha;
 	cout << CCameraEffectsManager::GetInstance()->Get("CameraShake")->GetStatus() << endl;*/
-	cout << cPlayer3D->GetMovementSpeed() << endl;
+	//cout << cPlayer3D->GetMovementSpeed() << endl;
 	//cout << cPlayer3D->GetWeapon()->getReloadTime() << endl;
 	//Call the cGUI Scene3D's update method
 	//cGUI_Scene3D->Update(dElapsedTime);
-	//cout << cPlayer3D->GetMovementSpeed() << endl;
 	
 	//Get keyboard updates for player3D
 	if (CKeyboardController::GetInstance()->IsKeyDown(GLFW_KEY_W))
@@ -312,16 +377,18 @@ bool CScene3D::Update(const double dElapsedTime)
 	}
 	else
 	{
-		cPlayer3D->SetMovementSpeed(2.5f);
+		cCamera->vec3Offset = glm::vec3(0, 0, 0);
 	}
+	/*else if(!CKeyboardController::GetInstance()->IsKeyDown(GLFW_KEY_LEFT_CONTROL))
+	{
+		cCamera->vec3Offset = glm::vec3(0, 0, 0);
+		cPlayer3D->SetMovementSpeed(2.5f);
+	}*/
 	//Sprinting code
 	if (CKeyboardController::GetInstance()->IsKeyDown(GLFW_KEY_LEFT_SHIFT))
 	{
-		cPlayer3D->SetMovementSpeed(5.f);
-	}
-	else
-	{
-		cPlayer3D->SetMovementSpeed(2.5f);
+		//cPlayer3D->SetMovementSpeed(5.f);
+		cPlayer3D->ProcessMovement(CPlayer3D::PLAYERMOVEMENT::SPRINTING, (float)dElapsedTime);
 	}
 
 	if (CKeyboardController::GetInstance()->IsKeyPressed(GLFW_KEY_SPACE))
@@ -381,12 +448,18 @@ bool CScene3D::Update(const double dElapsedTime)
 
 
 	//Get mouse button updates
-	if (cMouseController->IsButtonReleased(CMouseController::BUTTON_TYPE::LMB))
+
+	if (cMouseController->IsButtonReleased(CMouseController::BUTTON_TYPE::LMB) && nullptr != dynamic_cast<CPistol*>(cPlayer3D->GetWeapon()))
 	{
 		std::cout << "FIRE" << std::endl;
 		cPlayer3D->DischargeWeapon();
+		
 	}
-
+	else if (cMouseController->IsButtonDown(CMouseController::BUTTON_TYPE::LMB) && nullptr != dynamic_cast<CM4A1*>(cPlayer3D->GetWeapon()))
+	{
+		std::cout << "M4 FIRE" << std::endl;
+		cPlayer3D->DischargeWeapon();
+	}
 	//Scoping
 	if (cMouseController->IsButtonPressed(CMouseController::BUTTON_TYPE::RMB))
 	{
@@ -428,23 +501,28 @@ bool CScene3D::Update(const double dElapsedTime)
 	}
 
 	//Bullet whizzing code
-	for (int i = 0; i < cProjectileManager->vProjectile.size(); ++i)
-	{
-		if (cProjectileManager->vProjectile[i]->GetSource() != cPlayer3D)
-		{
-			if (glm::distance(cProjectileManager->vProjectile[i]->GetPosition(), cPlayer3D->GetPosition()) < 5.f)
-			{
-				glm::vec3 Bullet; //Bullet Distance 
-				glm::vec3 FromBulletToPlayer;// Bullet to Player vector
-				FromBulletToPlayer = glm::normalize(cPlayer3D->GetPosition() - cProjectileManager->vProjectile[i]->GetPosition()); // b vector
-				
-			}
-		}
-		else
-		{
-			continue; // skipping if the projectile is from the player else it will run the above.
-		}
-	}
+
+	
+
+
+
+	//for (int i = 0; i < cProjectileManager->vProjectile.size(); ++i)
+	//{
+	//	if (cProjectileManager->vProjectile[i]->GetSource() != cPlayer3D)
+	//	{
+	//		if (glm::distance(cProjectileManager->vProjectile[i]->GetPosition(), cPlayer3D->GetPosition()) < 5.f)
+	//		{
+	//			glm::vec3 Bullet; //Bullet Distance 
+	//			glm::vec3 FromBulletToPlayer;// Bullet to Player vector
+	//			FromBulletToPlayer = glm::normalize(cPlayer3D->GetPosition() - cProjectileManager->vProjectile[i]->GetPosition()); // b vector
+	//			
+	//		}
+	//	}
+	//	else
+	//	{
+	//		continue; // skipping if the projectile is from the player else it will run the above.
+	//	}
+	//}
 
 
 	//Update the solid objects
@@ -549,7 +627,6 @@ void CScene3D::Render(void)
 
 	
 
-
 	//Render the terrain
 	cTerrain->SetView(view);
 	cTerrain->SetProjection(projection);
@@ -574,12 +651,7 @@ void CScene3D::Render(void)
 
 	
 
-	//Rendering cGUI
-	cGUI_Scene3D->SetProjection(projection);
-	//Call the cGUI_Scene3D's PreRender()
-	cGUI_Scene3D->PreRender();
-	cGUI_Scene3D->Render();
-	cGUI_Scene3D->PostRender();
+	
 
 	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test
 
@@ -589,6 +661,14 @@ void CScene3D::Render(void)
 	cPlayer3D->GetWeapon()->Render();
 	cPlayer3D->GetWeapon()->PostRender();
 
+	glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
+	//Rendering cGUI
+	cGUI_Scene3D->SetProjection(projection);
+	//Call the cGUI_Scene3D's PreRender()
+	cGUI_Scene3D->PreRender();
+	cGUI_Scene3D->Render();
+	cGUI_Scene3D->PostRender();
+
 	return;
 }
 
@@ -597,4 +677,14 @@ void CScene3D::Render(void)
  */
 void CScene3D::PostRender(void)
 {
+}
+
+void CScene3D::setPause(bool p)
+{
+	isPaused = p;
+}
+
+float CScene3D::GetTimer()
+{
+	return timer;
 }

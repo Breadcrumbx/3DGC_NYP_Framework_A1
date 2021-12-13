@@ -43,6 +43,8 @@ using namespace std;
 // Include CPauseState
 #include "GameStateManagement/PauseState.h"
 
+#include "GameStateManagement/LoseState.h"
+
 /**
  @brief Define an error callback
  @param error The error code
@@ -246,6 +248,7 @@ bool Application::Init(void)
 	CGameStateManager::GetInstance()->AddGameState("PlayGameState", new CPlayGameState());
 	CGameStateManager::GetInstance()->AddGameState("Play3DGameState", new CPlay3DGameState());
 	CGameStateManager::GetInstance()->AddGameState("PauseState", new CPauseState());
+	CGameStateManager::GetInstance()->AddGameState("LoseState", new CLoseState());
 
 	// Set the active scene
 	CGameStateManager::GetInstance()->SetActiveGameState("IntroState");

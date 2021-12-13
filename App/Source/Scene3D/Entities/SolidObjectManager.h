@@ -52,6 +52,7 @@ public:
 	// Render this class instance
 	virtual void Render(void);
 
+	
 protected:
 	// Render Settings
 	glm::mat4 model;

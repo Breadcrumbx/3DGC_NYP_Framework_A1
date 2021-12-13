@@ -71,6 +71,7 @@ bool CSoundController::LoadSound(	string filename,
 									const int ID,
 									const bool bPreload,
 									const bool bIsLooped,
+									const bool isOverlap,
 									CSoundInfo::SOUNDTYPE eSoundType,
 									vec3df vec3dfSoundPos)
 {
@@ -96,9 +97,9 @@ bool CSoundController::LoadSound(	string filename,
 	// Add the entity now
 	CSoundInfo* cSoundInfo = new CSoundInfo();
 	if (eSoundType == CSoundInfo::SOUNDTYPE::_2D)
-		cSoundInfo->Init(ID, pSoundSource, bIsLooped);
+		cSoundInfo->Init(ID, pSoundSource, bIsLooped,isOverlap);
 	else
-		cSoundInfo->Init(ID, pSoundSource, bIsLooped, eSoundType, vec3dfSoundPos);
+		cSoundInfo->Init(ID, pSoundSource, bIsLooped,isOverlap, eSoundType, vec3dfSoundPos);
 
 	// Set to soundMap
 	soundMap[ID] = cSoundInfo;
@@ -118,7 +119,7 @@ void CSoundController::PlaySoundByID(const int ID)
 		cout << "Sound #" << ID << " is not playable." << endl;
 		return;
 	}
-	else if (cSoundEngine->isCurrentlyPlaying(pSoundInfo->GetSound()))
+	else if (cSoundEngine->isCurrentlyPlaying(pSoundInfo->GetSound()) && !pSoundInfo->GetOverlap())
 	{
 		cout << "Sound #" << ID << " is currently being played." << endl;
 		return;
